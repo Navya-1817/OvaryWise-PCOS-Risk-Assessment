@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const model = new NeuralNetwork();
         const riskScore = model.predict(features);
+        console.log("Risk Score:", riskScore); // Debugging statement
 
         const riskLevel = getRiskLevel(riskScore);
         const recommendations = getRecommendations(riskScore);
@@ -19,6 +20,23 @@ document.addEventListener("DOMContentLoaded", () => {
         displayError();
     }
 });
+
+function getRiskLevel(score) {
+    console.log("Evaluating risk level for score:", score); // Debugging statement
+    if (score < 0.80) {
+        return {
+            level: "Possibly At No Risk",
+            color: "#4CAF50",
+            description: "Your symptoms suggest a low likelihood of PCOS. Maintain a healthy lifestyle."
+        };
+    } else {
+        return {
+            level: "Possibly At Risk",
+            color: "#FFC107",
+            description: "Your symptoms suggest a potential risk of PCOS. Consider consulting a healthcare provider."
+        };
+    }
+}
 
 function processResponses(data) {
     if (!data || typeof data !== 'object') {
@@ -144,31 +162,17 @@ function calculateBMIFeature(measurements) {
 }
 
 
-function getRiskLevel(score) {
-    if (score < 0.50) {
-        return {
-            level: "Possibly At No Risk",
-            color: "#4CAF50",
-            description: "Your symptoms suggest a low likelihood of PCOS. Maintain a healthy lifestyle."
-        };
-    }else{
-    return {
-        level: "Possibly At Risk",
-        color: "#FFC107",
-        description: "Your symptoms suggest a potential risk of PCOS. Consider consulting a healthcare provider."
-    };
-}
-}
+
 
 function getRecommendations(score) {
-    if (score < 0.50) {
+    if (score < 0.75) {
         return [
             "Maintain a healthy lifestyle",
             "Regular exercise",
             "Balanced diet",
             "Monitor menstrual cycles"
         ];
-    } else if (score < 0.75) {
+    } else if (score < 0.80) {
         return [
             "Schedule a check-up with your healthcare provider",
             "Keep a detailed menstrual calendar <a href='https://tampax.com/en-us/period-tracker/' target='_blank'>Period Tracker App</a>",
@@ -199,7 +203,7 @@ function displayResults(riskLevel, recommendations, riskScore) {
             .map(rec => `<li>${rec}</li>`)
             .join('');
 
-        if (riskScore >= 0.50) {
+        if (riskScore >= 0.80) {
             const searchLink = document.createElement('div');
             searchLink.className = 'doctor-search';
             searchLink.innerHTML = `
