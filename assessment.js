@@ -1,7 +1,6 @@
 let currentQuestionIndex = 0;
 const responses = {};
 
-// Define questions array
 const questions = [
     {
         type: "dates",
@@ -62,15 +61,11 @@ const questions = [
     }
     ]
 
-// Add DOM elements
 const questionContainer = document.getElementById('question-container');
 const progressBar = document.getElementById('progress-bar');
 const prevButton = document.getElementById('prev-btn');
 const nextButton = document.getElementById('next-btn');
 
-// ...existing questions array code...
-
-// Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadQuestion(currentQuestionIndex);
     updateNavigationButtons();
@@ -129,7 +124,6 @@ function updateNavigationButtons() {
 }
 
 function submitAssessment() {
-    // Validate measurements before submission
     if (!validateAllResponses()) {
         alert("Please complete all measurements");
         return;
@@ -140,15 +134,13 @@ function submitAssessment() {
 }
 
 function validateAllResponses() {
-    // Ensure measurements are complete
-    const measurementResponses = responses[6]; // WHR measurements
+    const measurementResponses = responses[6]; 
     if (!measurementResponses?.Waist?.value || !measurementResponses?.Hip?.value) {
         return false;
     }
     return true;
 }
 
-// ...existing loadQuestion function...
 
 function loadQuestion(index) {
     const questionData = questions[index];
@@ -208,9 +200,7 @@ function loadQuestion(index) {
     html += `</div>`;
     questionContainer.innerHTML = html;
     
-    // Update progress bar
     progressBar.style.width = `${((index + 1) / questions.length) * 100}%`;
 }
 
-// Initial load
 loadQuestion(currentQuestionIndex);

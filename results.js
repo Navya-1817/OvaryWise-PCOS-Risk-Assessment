@@ -1,3 +1,17 @@
+function calculateRiskScore(features) {
+    const weights = [0.1, 0.3, 0.1, 0.3, 0.1, 0.1, 0.3, 0.1, 0]; // Adjusted weights
+
+    let riskScore = 0;
+
+    for (let i = 0; i < features.length; i++) {
+        riskScore += features[i] * weights[i];
+        console.log(`Feature ${i}: ${features[i]}, Weight: ${weights[i]}, Contribution: ${features[i] * weights[i]}`);
+    }
+
+    console.log("Calculated Risk Score (Weighted Sum):", riskScore);
+    return riskScore;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -7,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const features = processResponses(responseData);
         console.log("Features:", features);
 
-        const model = new NeuralNetwork();
-        const riskScore = model.predict(features);
-        console.log("Risk Score:", riskScore); // Debugging statement
+        // Calculate risk score using weighted sum
+        const riskScore = calculateRiskScore(features);
+        console.log("Final Risk Score:", riskScore);
 
         const riskLevel = getRiskLevel(riskScore);
         const recommendations = getRecommendations(riskScore);
@@ -23,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getRiskLevel(score) {
     console.log("Evaluating risk level for score:", score); // Debugging statement
-    if (score < 0.80) {
+    if (score < 0.50) { // Adjusted threshold
         return {
             level: "Possibly At No Risk",
             color: "#4CAF50",
@@ -41,7 +55,7 @@ function getRiskLevel(score) {
 function processResponses(data) {
     if (!data || typeof data !== 'object') {
         console.warn("Invalid data structure");
-        return Array(10).fill(0);
+        return Array(9).fill(0); // Adjusted to 9 features
     }
 
     const features = [
@@ -53,8 +67,7 @@ function processResponses(data) {
         validateYesNo(data[5]),              // Skin darkening
         calculateWHR(data[6]),               // WHR raw value
         validateYesNo(data[7]),              // Family history
-        0,                                   // Reserved
-        calculateWHR(data[6])                // WHR normalized
+        0                                    // Reserved
     ];
 
     console.log("Feature mapping:", {
@@ -89,7 +102,7 @@ function calculateWHR(measurements) {
         const waistValue = parseFloat(measurements.Waist.value);
         const hipValue = parseFloat(measurements.Hip.value);
 
-        return waistValue/hipValue;
+        return waistValue / hipValue;
     } catch (error) {
         console.error("WHR calculation error:", error);
         return 0;
@@ -100,14 +113,13 @@ function validateYesNo(value) {
     return value === 'yes' ? 1 : 0;
 }
 
-
 function normalizeHirsutism(value) {
     if (!value) {
         console.warn("Missing hirsutism score");
         return 0;
     }
     const score = parseInt(value);
-    return isNaN(score) ? 0 : Math.min(score / 36, 1);
+    return isNaN(score) ? 0 : Math.min(score / 36, 1); // Normalize to 0-1 scale
 }
 
 function calculatePeriodFeature(dates) {
@@ -161,11 +173,8 @@ function calculateBMIFeature(measurements) {
     return Math.min(Math.abs(bmi - 21.7) / 10, 1);
 }
 
-
-
-
 function getRecommendations(score) {
-    if (score < 0.75) {
+    if (score < 0.50) {
         return [
             "Maintain a healthy lifestyle",
             "Regular exercise",
@@ -203,7 +212,7 @@ function displayResults(riskLevel, recommendations, riskScore) {
             .map(rec => `<li>${rec}</li>`)
             .join('');
 
-        if (riskScore >= 0.80) {
+        if (riskScore >= 0.70) {
             const searchLink = document.createElement('div');
             searchLink.className = 'doctor-search';
             searchLink.innerHTML = `
