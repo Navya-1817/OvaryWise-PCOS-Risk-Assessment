@@ -1,5 +1,5 @@
 function calculateRiskScore(features) {
-    const weights = [0.1, 0.3, 0.1, 0.3, 0.1, 0.1, 0.3, 0.1, 0]; // Adjusted weights
+    const weights = [0.2, 0.3, 0.1, 0.3, 0.1, 0.1, 0.3, 0.1, 0]; // Adjusted weights
 
     let riskScore = 0;
 
@@ -174,7 +174,7 @@ function calculateBMIFeature(measurements) {
 }
 
 function getRecommendations(score) {
-    if (score < 0.50) {
+    if (score < 0.70) {
         return [
             "Maintain a healthy lifestyle",
             "Regular exercise",
@@ -212,7 +212,7 @@ function displayResults(riskLevel, recommendations, riskScore) {
             .map(rec => `<li>${rec}</li>`)
             .join('');
 
-        if (riskScore >= 0.70) {
+        if (riskScore >= 0.80) {
             const searchLink = document.createElement('div');
             searchLink.className = 'doctor-search';
             searchLink.innerHTML = `
